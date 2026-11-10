@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { MaterialView } from "@/components/material-view";
 import { Scanner } from "@/components/scanner";
 import {
@@ -28,6 +28,8 @@ const SORTS: { key: SortKey; label: string }[] = [
   { key: "thickness", label: "Thickness" },
 ];
 
+const PAGE_SIZE = 25;
+
 function Home() {
   const [mode, setMode] = useState<"scan" | "browse">("scan");
   const [version, setVersion] = useState<"B" | "C">("C");
@@ -40,6 +42,7 @@ function Home() {
   const [scanned, setScanned] = useState<ParsedCode | null>(null);
   const [miss, setMiss] = useState<Miss | null>(null);
   const [jump, setJump] = useState(0);
+  const [page, setPage] = useState(0);
   const detailRef = useRef<HTMLDivElement>(null);
   const missRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +50,15 @@ function Home() {
     () => filterCatalog(CATALOG, query, family, thickness, sort),
     [query, family, thickness, sort],
   );
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount - 1);
+  const pageStart = safePage * PAGE_SIZE;
+  const pageRows = rows.slice(pageStart, pageStart + PAGE_SIZE);
   const selected = selectedId != null ? (ROW_BY_ID.get(selectedId) ?? null) : null;
+
+  useEffect(() => {
+    setPage(0);
+  }, [query, family, thickness, sort]);
 
   useEffect(() => {
     if (jump === 0) return;
@@ -216,8 +227,19 @@ function Home() {
             </p>
           </div>
 
+          {pageCount > 1 ? (
+            <Pager
+              page={safePage}
+              pageCount={pageCount}
+              from={pageStart + 1}
+              to={pageStart + pageRows.length}
+              total={rows.length}
+              onPage={setPage}
+            />
+          ) : null}
+
           <ul className="flex flex-col gap-2">
-            {rows.map((row) => (
+            {pageRows.map((row) => (
               <li key={row.numericId}>
                 <button
                   type="button"
@@ -237,9 +259,63 @@ function Home() {
             ))}
           </ul>
           {rows.length === 0 ? <p className="text-sm text-muted">Nothing matches that search.</p> : null}
+          {pageCount > 1 ? (
+            <Pager
+              page={safePage}
+              pageCount={pageCount}
+              from={pageStart + 1}
+              to={pageStart + pageRows.length}
+              total={rows.length}
+              onPage={setPage}
+            />
+          ) : null}
         </section>
       ) : null}
     </main>
+  );
+}
+
+function Pager({
+  page,
+  pageCount,
+  from,
+  to,
+  total,
+  onPage,
+}: {
+  page: number;
+  pageCount: number;
+  from: number;
+  to: number;
+  total: number;
+  onPage: (page: number) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <button
+        type="button"
+        aria-label="Previous page"
+        disabled={page === 0}
+        onClick={() => onPage(page - 1)}
+        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface disabled:opacity-40"
+      >
+        <ChevronLeft className="size-5" />
+      </button>
+      <p className="text-sm text-muted">
+        {from}–{to} of {total}
+        <span className="px-2">·</span>
+        {page + 1} / {pageCount}
+      </p>
+      <button
+        type="button"
+        aria-label="Next page"
+        disabled={page >= pageCount - 1}
+        onClick={() => onPage(page + 1)}
+        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface disabled:opacity-40"
+      >
+        <ChevronRight className="size-5" />
+      </button>
+    </div>
   );
 }
 
