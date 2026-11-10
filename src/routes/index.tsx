@@ -238,7 +238,7 @@ function Home() {
             />
           ) : null}
 
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-1">
             {pageRows.map((row) => (
               <li key={row.numericId}>
                 <button
@@ -246,14 +246,12 @@ function Home() {
                   onClick={() => pick(row)}
                   className={
                     selectedId === row.numericId
-                      ? "flex min-h-16 w-full items-center gap-3 rounded-2xl border border-accent bg-surface px-3 py-3 text-left"
-                      : "flex min-h-16 w-full items-center gap-3 rounded-2xl border border-line bg-surface px-3 py-3 text-left"
+                      ? "flex min-h-9 w-full items-baseline gap-3 rounded-lg border border-accent bg-surface px-3 py-1.5 text-left text-sm"
+                      : "flex min-h-9 w-full items-baseline gap-3 rounded-lg border border-line bg-surface px-3 py-1.5 text-left text-sm"
                   }
                 >
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{row.name}</span>
-                    <span className="block truncate text-sm text-muted">{row.thickness}</span>
-                  </span>
+                  <span className="min-w-0 flex-1 truncate font-semibold">{row.name}</span>
+                  <span className="shrink-0 text-xs text-muted">{row.thickness}</span>
                 </button>
               </li>
             ))}
