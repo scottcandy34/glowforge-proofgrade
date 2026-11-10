@@ -60,7 +60,8 @@
     body.printing .sheet-print {
       display: block !important;
       position: static !important;
-      width: auto !important;
+      width: 1.35in !important;
+      max-width: none !important;
       height: auto !important;
       overflow: visible !important;
       clip: auto !important;
@@ -69,6 +70,8 @@
       display: block !important;
       width: 1.35in !important;
       height: 1.35in !important;
+      max-width: none !important;
+      max-height: none !important;
     }
     body.printing .sheet-print p {
       display: block !important;

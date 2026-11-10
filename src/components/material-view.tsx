@@ -4,7 +4,49 @@ import { QrImage } from "@/components/qr-image";
 import { tubeSettings, tubeTypes, type CatalogRow, type LaserOp } from "@/lib/catalog";
 import { buildPayload, randomSerial, type ParsedCode } from "@/lib/proofgrade";
 
-const QR_PRINT_INCHES = 1.35;
+const QR_CODE_INCHES = 1.35;
+
+function pdfEscape(value: string): string {
+  return value.replaceAll("\\", " ").replaceAll("(", " ").replaceAll(")", " ");
+}
+
+function qrPdf(modules: { size: number; get: (row: number, col: number) => number }, title: string): string {
+  const n = modules.size;
+  const codePt = QR_CODE_INCHES * 72;
+  const modulePt = codePt / n;
+  const x0 = 0.6 * 72;
+  const y0 = 11 * 72 - 0.6 * 72 - codePt;
+  let ops = "0 0 0 rg\n";
+  for (let row = 0; row < n; row += 1) {
+    for (let col = 0; col < n; col += 1) {
+      if (!modules.get(row, col)) continue;
+      const x = x0 + col * modulePt;
+      const y = y0 + (n - 1 - row) * modulePt;
+      ops += `${x.toFixed(2)} ${y.toFixed(2)} ${modulePt.toFixed(2)} ${modulePt.toFixed(2)} re f\n`;
+    }
+  }
+  ops += `BT /F1 11 Tf ${x0.toFixed(2)} ${(y0 - 18).toFixed(2)} Td (${pdfEscape(title)}) Tj ET\n`;
+  const objects = [
+    "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n",
+    "2 0 obj << /Type /Pages /Count 1 /Kids [3 0 R] >> endobj\n",
+    "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >> endobj\n",
+    "4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n",
+    `5 0 obj << /Length ${ops.length} >> stream\n${ops}endstream endobj\n`,
+  ];
+  let body = "%PDF-1.4\n";
+  const offsets = [0];
+  for (const object of objects) {
+    offsets.push(body.length);
+    body += object;
+  }
+  const xrefAt = body.length;
+  let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (let index = 1; index < offsets.length; index += 1) {
+    xref += `${String(offsets[index]).padStart(10, "0")} 00000 n \n`;
+  }
+  body += `${xref}trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefAt}\n%%EOF`;
+  return body;
+}
 
 function isFramed(): boolean {
   return window.parent !== window;
@@ -151,7 +193,7 @@ export function MaterialView({
         if (!draw) return;
         return draw(payload, {
           errorCorrectionLevel: "M",
-          margin: 2,
+          margin: 0,
           width: 900,
           color: { dark: "#000000", light: "#ffffff" },
         });
@@ -261,8 +303,52 @@ export function MaterialView({
     window.print();
   }
 
-  function printCode() {
-    if (!printUrl) return;
+  async function printCode() {
+    if (!printUrl || !payload) return;
+    const qr = (await import("qrcode")) as {
+      create?: (text: string, opts: { errorCorrectionLevel: "M" }) => {
+        modules: { size: number; get: (row: number, col: number) => number };
+      };
+      default?: {
+        create?: (text: string, opts: { errorCorrectionLevel: "M" }) => {
+          modules: { size: number; get: (row: number, col: number) => number };
+        };
+      };
+    };
+    const create = qr.create ?? qr.default?.create;
+    if (create) {
+      const matrix = create(payload, { errorCorrectionLevel: "M" });
+      const blob = new Blob([qrPdf(matrix.modules, row.name)], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      const frame = document.createElement("iframe");
+      frame.setAttribute("aria-hidden", "true");
+      frame.style.position = "fixed";
+      frame.style.left = "-10000px";
+      frame.style.top = "0";
+      frame.style.width = "800px";
+      frame.style.height = "1000px";
+      frame.style.border = "0";
+      frame.src = url;
+      document.body.appendChild(frame);
+      frame.onload = () => {
+        const win = frame.contentWindow;
+        if (!win) {
+          frame.remove();
+          URL.revokeObjectURL(url);
+          printThisPage();
+          return;
+        }
+        const cleanup = () => {
+          frame.remove();
+          URL.revokeObjectURL(url);
+          win.removeEventListener("afterprint", cleanup);
+        };
+        win.addEventListener("afterprint", cleanup);
+        win.focus();
+        win.print();
+      };
+      return;
+    }
     printThisPage();
   }
 
@@ -379,7 +465,7 @@ export function MaterialView({
                   Print
                 </button>
               </div>
-              <p className="text-sm text-muted">Prints at 1.35 in (34 mm), the size of the code on the sheet.</p>
+              <p className="text-sm text-muted">Prints at 1.35 in (34 mm) across the code itself. Use 100% scale.</p>
               {copied === "selected" ? (
                 <p className="text-sm text-muted">The code is highlighted. Copy it from there.</p>
               ) : null}
