@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --color-bg: #f3efe6;
+  --color-surface: #fffdf8;
+  --color-ink: #1d1a16;
+  --color-muted: #6e675f;
+  --color-accent: #c24e16;
+  --color-on-accent: #fff7f2;
+  --color-line: #e3dbcf;
+  --color-chip: #efe7da;
+}
+
+@layer base {
+  html {
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    background: var(--color-bg);
+    color: var(--color-ink);
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      scroll-behavior: auto !important;
+    }
+  }
+  .sheet-print {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+  @media print {
+    html,
+    body.printing {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+      background: #fff !important;
+    }
+    body.printing > *:not(.sheet-print) {
+      display: none !important;
+    }
+    body.printing .sheet-print {
+      display: block !important;
+      position: static !important;
+      width: auto !important;
+      height: auto !important;
+      overflow: visible !important;
+      clip: auto !important;
+    }
+    body.printing .sheet-print img {
+      display: block !important;
+      width: 1.35in !important;
+      height: 1.35in !important;
+    }
+    body.printing .sheet-print p {
+      display: block !important;
+      margin: 0.12in 0 0 !important;
+      color: #000 !important;
+    }
+  }
+}

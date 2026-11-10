@@ -1,0 +1,114 @@
+json_id,common_name,title,thickness,prefix_if_json_id,verified_prefix,verified_qr_value,status,evidence,sample_payloads,notes,sku
+1,"Clear Acrylic, 1/8""",100,Medium,ABA,,,predicted from JSON id,,,,iphone
+2,Thick Clear Acrylic,Thick Clear Acrylic,Thick,ACA,,,predicted from JSON id,,,,clear-acrylic-thick-change-this
+3,Thick Cherry Plywood,"Cherry Plywood, 1/4""",Thick,ADA,,,predicted from JSON id,,,,thick-cherry-plywood-change-this
+4,Thick Walnut Plywood,"Walnut Plywood, 1/4""",Thick,AEA,,,predicted from JSON id,,,,thick-walnut-plywood-change-this
+5,Medium Frosted Acrylic,"Frosted Acrylic, 1/8""",Medium,AFA,,,predicted from JSON id,,,,medium-frosted-acrylic-fake
+6,Medium Teal Acrylic,"Teal Acrylic, 1/8""",Medium,AGA,,,predicted from JSON id,,,,teal-acrylic-medium-fake
+7,Chipboard,Standard Chipboard,Standard,AHA,,,predicted from JSON id,,,,chipboard-fake
+8,Cherry Hardwood,"Cherry Hardwood, 1/8""",Medium,AIA,,,predicted from JSON id,,,,cherry-hardwood-change-this
+9,Maple Hardwood,"Maple Hardwood, 1/8""",Medium,AJA,,,predicted from JSON id,,,,maple-hardwood-change-this
+10,Walnut Hardwood,"Walnut Hardwood, 1/8""",Medium,AKA,AKA,10,VERIFIED,photo,Glowforge:C:AKAASHH,"Medium Walnut Hardwood label, colormecrafty.net",sku-walnut-hardwood-new
+11,Thin Draftboard,"Draftboard, 3/32""",Thin,ALA,,,predicted from JSON id,,,,thin-mdf-fake
+12,Medium Maple Plywood,"Maple Plywood, 1/8""",Medium,AMA,,,predicted from JSON id,,,,fake-sku-need-to-figure-out-publishing
+13,Thick Maple Plywood,"Maple Plywood, 1/4""",Thick,ANA,,,predicted from JSON id,,,,thick-maple-plywood-update
+14,Medium Natural Leather,"Medium Natural Leather, 2-3 oz.",Medium,AOA,,,predicted from JSON id,,,,natural-leather-change-this-value
+15,Thick Natural Leather,"Thick Natural Leather, 5-6 oz.",Thick,APA,,,predicted from JSON id,,,,thick-natural-leather-change-this
+16,Maple Veneer,"Maple Veneer, 1/32""",Thin,AQA,,,predicted from JSON id,,,,maple-veneer-fake
+17,Walnut Veneer,"Walnut Veneer, 1/32""",Thin,ARA,,,predicted from JSON id,,,,walnut-veneer-fake
+18,Cherry Veneer,"Cherry Veneer, 1/32""",Thin,ASA,,,predicted from JSON id,,,,cherry-veneer-fake
+19,Medium Blue Acrylic,"Blue Acrylic, 1/8""",Medium,ATA,,,predicted from JSON id,,,,blue-acrylic-medium-fake
+20,Medium Lavender Acrylic,"Lavender Acrylic, 1/8""",Medium,AUA,,,predicted from JSON id,,,,lavender-acrylic-medium-fake
+21,"Corrugated Cardboard, 1/8""","Corrugated Cardboard, 1/8""","1/8""",AVA,,,predicted from JSON id,,,,cardboard-1-8-change-this
+24,Basswood Hardwood,"Basswood Hardwood, 1/8""",Medium,AYA,AYA,24,VERIFIED,photo,Glowforge:C:AYAANtf ; Glowforge:C:AYAAYyT,Basswood Hardwood / Medium Basswood Hardwood labels,bedium-basswood-hardwood-fake
+25,Red Oak Hardwood,"Red Oak Hardwood, 1/8""",Medium,AZA,,,predicted from JSON id,,,,medium-red-oak-hardwood-fake
+26,Medium Cherry Plywood,"Cherry Plywood, 1/8""",Medium,AaA,AaA,26,VERIFIED,forum,Glowforge:B:AaAAACW ; Glowforge:B:AaAABCU,"Medium Cherry Plywood, Glowforge forum",medium-cherry-plywood-change-this
+27,Medium Walnut Plywood,"Walnut Plywood, 1/8""",Medium,AbA,,,predicted from JSON id,,,,this-is-fake-walnut-plywood-sku
+28,Poplar Hardwood,"Poplar Hardwood, 1/8""",Medium,AcA,,,predicted from JSON id,,,,poplar-change-this
+29,Medium Aspen Hardwood,"Aspen Hardwood, 1/8""",Medium,AdA,,,predicted from JSON id,,,,medium-aspen-hardwood-fake
+30,Medium Ash Hardwood,"Ash Hardwood, 1/8""",Medium,AeA,,,predicted from JSON id,,,,medium-ash-hardwood-fake
+31,Medium Black Acrylic,"Black Acrylic, 1/8""",Medium,AfA,AfA,31,VERIFIED,user,Glowforge:C:AfAAC7M ; Glowforge:C:AfAABOX,"Medium Black Acrylic, user scans",medium-black-acrylic-fake
+32,Medium White Acrylic,"White Acrylic, 1/8""",Medium,AgA,,,predicted from JSON id,,,,medium-white-acrylic-fill-in
+33,Medium Purple Acrylic,"Purple Acrylic, 1/8""",Medium,AhA,,,predicted from JSON id,,,,purple-acrylic-medium-fake
+34,Medium Draftboard,"Draftboard, 1/8""",Medium,AiA,AiA,34,VERIFIED,user,Glowforge:C:AiACDTn and 4 more AiA… sheets,"Medium Draftboard, user scans",medium-Draftboard-change-this
+35,Thin Natural Leather,"Thin Natural Leather, 1.5 oz.",Thin,AjA,,,predicted from JSON id,,,,thin-natural-leather-change-this
+36,Medium Red Acrylic,"Red Acrylic, 1/8""",Medium,AkA,,,predicted from JSON id,,,,red-acrylic-medium-fake
+37,Medium Green Acrylic,"Green Acrylic, 1/8""",Medium,AlA,,,predicted from JSON id,,,,green-acrylic-medium-fake
+38,Medium Orange Acrylic,"Orange Acrylic, 1/8""",Medium,AmA,,,predicted from JSON id,,,,orange-acrylic-medium-fake
+40,Medium Yellow Acrylic,"Yellow Acrylic, 1/8""",Medium,AoA,,,predicted from JSON id,,,,yellow-acrylic-medium-fake
+41,Medium Clear Blue Acrylic,"Clear Blue Acrylic, 1/8""",Medium,ApA,ApA,41,VERIFIED,forum,Glowforge:B:ApAAAR8,"Clear / fluorescent blue acrylic, Glowforge forum",fluor-blue-acrylic-medium-fake
+42,Medium Fluorescent Green Acrylic,"Fluorescent Green Acrylic, 1/8""",Medium,AqA,,,predicted from JSON id,,,,fluor-green-acrylic-medium-fake
+44,Medium Fluorescent Pink Acrylic,"Fluorescent Pink Acrylic, 1/8""",Medium,AsA,,,predicted from JSON id,,,,fluor-pink-acrylic-medium-fake
+47,Thick Draftboard,"Draftboard, 1/4""",Thick,AvA,AvA,47,VERIFIED,user,Glowforge:C:AvAAKJg and 3 more AvA… sheets,"Thick Draftboard, user scans",fill-in-later
+48,Medium Basswood Plywood,"Basswood Plywood, 1/8""",Medium,AwA,,,predicted from JSON id,,,,med-bass-ply-replace
+49,Thick Basswood Plywood,"Basswood Plywood, 1/4""",Thick,AxA,,,predicted from JSON id,,,,thick-basswood-ply-replace
+51,Thick Black Acrylic,"Black Acrylic, 1/4""",Thick,AzA,,,predicted from JSON id,,,,thick-black-acrylic-fake
+52,Thick Green Acrylic,"Green Acrylic, 1/4""",Thick,A0A,,,predicted from JSON id,,,,fake-green-acrylic
+53,Thick White Acrylic,"White Acrylic, 1/4""",Thick,A1A,,,predicted from JSON id,,,,thick-white-acrylic-fill-in
+54,Thick Blue Acrylic,"Blue Acrylic, 1/4""",Thick,A2A,,,predicted from JSON id,,,,fake-blue-acrylic
+55,Thick Red Acrylic,"Red Acrylic, 1/4""",Thick,A3A,,,predicted from JSON id,,,,fake-red-acrylic
+56,Thick Orange Acrylic,"Orange Acrylic, 1/4""",Thick,A4A,,,predicted from JSON id,,,,fake-orange-acrylic
+57,Thick Yellow Acrylic,"Yellow Acrylic, 1/4""",Thick,A5A,,,predicted from JSON id,,,,fake-yellow-acrylic
+58,Thick Purple Acrylic,"Purple Acrylic, 1/4",Thick,A6A,,,predicted from JSON id,,,,fake-purple-acrylic
+59,Thick Teal Acrylic,"Teal Acrylic, 1/4""",Thick,A7A,,,predicted from JSON id,,,,fake-teal-acrylic
+60,MacBook Pro®,Silver MacBook Pro®,Silver,A8A,,,predicted from JSON id,,,,Fake_SilverMacBookPro
+61,Medium Glass Green Acrylic,"Glass Green Acrylic, 1/4""",Thick,A9A,,,predicted from JSON id,,,,fake-glass-green-acrylic
+62,Thick Fluorescent Green Acrylic,"Fluorescent Green Acrylic, 1/4""",Thick,BAA,,,predicted from JSON id,,,,fake-fluorescent-green-acrylic
+63,Thick Fluorescent Pink Acrylic,"Fluorescent Pink Acrylic, 1/4""",Thick,BBA,,,predicted from JSON id,,,,think-pink-acrylic-fake
+64,Medium Glass Green Acrylic,"Glass Green Acrylic, 1/8""",Medium,BCA,,,predicted from JSON id,,,,fake-medium-glass-green
+81,Silver iPhone 7®,Silver iPhone 7®,Silver,BTA,,,predicted from JSON id,,,,Fake_SilveriPhone7
+82,Gold iPhone 7®,Gold iPhone 7®,Gold,BUA,,,predicted from JSON id,,,,Fake_GoldiPhone7
+84,Black iPhone 7®,Black iPhone 7®,Black,BWA,,,predicted from JSON id,,,,Fake_BlackiPhone7
+85,Rose Gold iPhone 7®,Rose Gold iPhone 7®,Rose Gold,BXA,,,predicted from JSON id,,,,Fake_RoseGoldiPhone7
+86,Just Black Google Pixel 2®,Just Black Google Pixel 2®,Just Black,BYA,,,predicted from JSON id,,,,Fake_BlackPixel2
+87,Kinda Blue Google Pixel 2®,Kinda Blue Google Pixel 2®,Kinda Blue,BZA,,,predicted from JSON id,,,,FAKE_BluePixel2
+88,Clearly White Google Pixel 2®,Clearly White Google Pixel 2®,Clearly White,BaA,,,predicted from JSON id,,,,FAKE_WhitePixel2
+89,Magnesium Microsoft Surface 2®,Magnesium Microsoft Surface 2®,Magnesium,BbA,,,predicted from JSON id,,,,FAKE_MagnesiumSurface2
+90,Dark Titanium Microsoft Surface RT®,Dark Titanium Microsoft Surface RT®,Black,BcA,,,predicted from JSON id,,,,FAKE_DarkTitaniumSurfaceRT
+92,Medium Pine Softwood,"Pine Softwood, 1/8""",Medium,BeA,,,predicted from JSON id,,,,med-pine-softwood-change-this
+93,Medium Pine Softwood,"Pine Softwood, 1/4""",Thick,BfA,,,predicted from JSON id,,,,thick-pine-softwood-change-this
+100,Copy Paper,Copy Paper,20 lb,BmA,,,predicted from JSON id,,,,copy-paper-change-this
+101,"Corrugated Cardboard, 5/32""","Corrugated Cardboard, 5/32""","5/32""",BnA,,,predicted from JSON id,,,,cardboard-5-32-change-this
+103,Light Basswood Plywood,"Basswood Plywood, Light (0.12"")",Light,BpA,BnA,101,VERIFIED,photo,Glowforge:C:BnAAEKg ; Glowforge:C:BnAAEqP,Light Basswood Plywood label,light-basswood-plywood-fake
+104,Light Cherry Plywood,"Cherry Plywood, Light (0.12"")",Light,BqA,BoA,102,VERIFIED,photo,Glowforge:C:BoAAAC2,Light Cherry Plywood label,light-cherry-plywood-fake
+105,Light Maple Plywood,"Maple Plywood, Light (0.12"")",Light,BrA,BpA,103,VERIFIED,photo,Glowforge:C:BpAABBK ; BpAABDW ; BpAABEk ; BpAABEl,Light Maple Plywood label,light-maple-plywood-fake
+106,Light Walnut Plywood,"Walnut Plywood, Light (0.12"")",Light,BsA,BqA,104,VERIFIED,photo,Glowforge:C:BqAAAoU,Light Walnut Plywood label,light-walnut-plywood-fake
+123,Thin Clear Red Acrylic,"Clear Red Acrylic, 1/16""",Thin,B9A,,,predicted from JSON id,,,,thin-red-acrylic-sku
+124,Thin White Acrylic,"White Acrylic, 1/16""",Thin,CAA,,,predicted from JSON id,,,,thin-white-acrylic-sku
+125,Thin Black Acrylic,"Black Acrylic, 1/16""",Thin,CBA,,,predicted from JSON id,,,,thin-black-acrylic-sku
+127,Medium Ebony Black Leather,Medium Ebony Black Leather,Medium,CDA,,,predicted from JSON id,,,,624-03_624-12
+128,Medium Espresso Brown Leather,Medium Espresso Brown Leather,Medium,CEA,,,predicted from JSON id,,,,627-03_627_12
+130,Thick Ebony Black Leather,Thick Ebony Black Leather,Thick,CGA,,,predicted from JSON id,,,,657-03_657-12
+131,Thick Espresso Brown Leather,Thick Espresso Brown Leather,Thick,CHA,,,predicted from JSON id,,,,660-03_660-12
+133,Thin White Taskboard,"Thin White Taskboard 1/32""",Thin,CJA,,,predicted from JSON id,,,,white-taskboard-1-32-sku
+135,Medium White Taskboard,"Medium White Taskboard 1/16""",Medium,CLA,,,predicted from JSON id,,,,white-taskboard-1-16-sku
+139,Eco Medium White Acrylic,Eco White Medium Acrylic,Eco Medium,CPA,,,predicted from JSON id,,,,eco-medium-white-acrlylic
+140,Eco Medium Clear Acrylic,Eco Medium Clear Acrylic,Eco Medium,CQA,,,predicted from JSON id,,,,eco-medium-clear-acrylic
+141,Eco Thick Clear Acrylic,Eco Thick Clear Acrylic,Thick,CRA,,,predicted from JSON id,,,,clear-acrylic-thick-change-this
+142,Eco Medium Blue Acrylic,"Eco Blue Acrylic, 1/8""",Eco Medium,CSA,,,predicted from JSON id,,,,blue-acrylic-medium-fake
+143,Eco Thin Black Acrylic,Eco Thin Black Acrylic,Eco Thin,CTA,,,predicted from JSON id,,,,Eco Thin Black Acrylic
+144,Eco Thin Red Acrylic,Eco Thin Red Acrylic,Eco Thin,CUA,,,predicted from JSON id,,,,Eco Red Acrylic
+145,Eco Thin Green Acrylic,Eco Thin Green Acrylic,Eco Thin,CVA,,,predicted from JSON id,,,,eco thin green acrylic
+146,Eco Thin Orange Acrylic,Eco Thin Orange Acrylic,Eco Thin,CWA,,,predicted from JSON id,,,,eco thin orange acrylic
+147,Eco Thin Teal Acrylic,Eco Thin Teal Acrylic,Eco Thin,CXA,CTA,143,VERIFIED,photo,Glowforge:C:CTAADSN,Eco Thin Teal Acrylic label,eco-thin-teal-acrylic
+148,Eco Thin Purple Acrylic,Eco Thin Purple Acrylic,Eco Thin,CYA,,,predicted from JSON id,,,,Eco Thin Purple Acrylic
+149,Eco Medium Black Acrylic,Eco Medium Black Acrylic,Eco Medium,CZA,CVA,145,VERIFIED,user,Glowforge:C:CVAAAWS ; Glowforge:C:CVAAAWT,"Eco Medium Black Acrylic, user scans",eco-medium-black-acrylic
+152,Eco Medium Orange Acrylic,"Eco Medium Orange Acrylic, 1/8""",Eco Medium,CcA,,,predicted from JSON id,,,,orange-acrylic-medium-fake
+172,Eco Red Iron-On,Eco Red Iron-On,Eco,CwA,,,predicted from JSON id,,,,811961034566
+173,Eco Black Iron-On,Eco Black Iron-On,Eco,CxA,,,predicted from JSON id,,,,811961034573
+174,Eco Blue Iron-On,Eco Blue Iron-On,Eco,CyA,,,predicted from JSON id,,,,811961034580
+175,Eco Green Iron-on,Eco Green Iron-On,Eco,CzA,,,predicted from JSON id,,,,eco green iron on
+178,Eco White Iron-On,Eco White Iron-On,Eco,C2A,,,predicted from JSON id,,,,eco-white-iron-on
+190,Eco Shimmer Titanium Iron On,Eco Shimmer Titanium Iron-On,Eco,DEA,,,predicted from JSON id,,,,eco-shimmer-titanium-iron-on
+191,Eco Shimmer Gold Iron On,Eco Shimmer Gold Iron-On,Eco,DFA,,,predicted from JSON id,,,,eco-shimmer-gold-iron-on
+192,Eco Shimmer Pink Iron-On,Eco Shimmer Pink Iron-On,Eco,DGA,,,predicted from JSON id,,,,eco-shimmer-rose-iron-on
+193,Eco Pastel Pink Iron-On,Eco Pastel Pink Iron-On,Eco,DHA,,,predicted from JSON id,,,,pastel-pink
+194,Eco Pastel Blue Iron-On,Eco Pastel Blue Iron-On,Eco,DIA,,,predicted from JSON id,,,,pastel-blue
+195,Eco Pastel Beige Iron-On,Eco Pastel Beige Iron-On,Eco,DJA,,,predicted from JSON id,,,,pastel-beige
+199,Medium Matte Black Acrylic,"Medium Matte Black Acrylic, 1/8""",Medium,DNA,,,predicted from JSON id,,,,medium-matte-black-acrylic-fake
+200,80 lb Cardstock,80 lb Cardstock,80 lb,DOA,,,predicted from JSON id,,,,80lb-cardstock
+201,Eco Medium Yellow Acrylic,"Eco Yellow Acrylic, 1/8""",Medium,DPA,,,predicted from JSON id,,,,yellow-acrylic-medium-fake
+202,Eco Medium Glass Green Acrylic,"Eco Glass Green Acrylic, 1/8""",Medium,DQA,,,predicted from JSON id,,,,fake-medium-glass-green
+204,Eco Thick Black Acrylic,"Eco Thick Black Acrylic, 1/4""",Eco Thick,DSA,,,predicted from JSON id,,,,thick-black-acrylic-fake
+205,Sticker Paper,Sticker Paper,20 lb,DTA,,,predicted from JSON id,,,,copy-paper-change-this
+99999,Slate,Slate,Natural,,,,does not fit 3-char code,,,,slate-change-this
