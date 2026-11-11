@@ -47,7 +47,7 @@ export const Route = createRootRoute({
         { charSet: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { title: APP_NAME },
-        { name: "theme-color", content: "#f3efe6" },
+        { name: "theme-color", content: "#0a3036" },
         ...(ogImage
           ? [
               { property: "og:image", content: ogImage },

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, ImageUp, ScanLine } from "lucide-react";
+import { Camera, ScanLine } from "lucide-react";
 
 export function Scanner({
   onCode,
@@ -9,7 +9,6 @@ export function Scanner({
   busy?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
   const [cameraOn, setCameraOn] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +42,7 @@ export function Scanner({
         controlsRef.current = controls;
       } catch {
         if (!dead) {
-          setError("The camera didn't start. Paste the code, or upload a photo of the sticker.");
+          setError("The camera didn't start. Paste the code instead.");
           setCameraOn(false);
         }
       }
@@ -54,22 +53,6 @@ export function Scanner({
       controlsRef.current = null;
     };
   }, [cameraOn, onCode]);
-
-  async function onFile(file: File | undefined) {
-    if (!file) return;
-    setError(null);
-    const url = URL.createObjectURL(file);
-    try {
-      const { BrowserQRCodeReader } = await import("@zxing/browser");
-      const reader = new BrowserQRCodeReader();
-      const result = await reader.decodeFromImageUrl(url);
-      onCode(result.getText());
-    } catch {
-      setError("No QR code found in that photo.");
-    } finally {
-      URL.revokeObjectURL(url);
-    }
-  }
 
   return (
     <section className="flex flex-col gap-4">
@@ -83,26 +66,8 @@ export function Scanner({
           className="inline-flex min-h-11 items-center gap-2 rounded-full bg-accent px-5 text-sm font-semibold text-on-accent"
         >
           <ScanLine className="size-4" />
-          Scan sticker
+          Scan
         </button>
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-5 text-sm font-semibold"
-        >
-          <ImageUp className="size-4" />
-          Upload photo
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="sr-only"
-          onChange={(event) => {
-            void onFile(event.target.files?.[0]);
-            event.target.value = "";
-          }}
-        />
       </div>
 
       {cameraOn ? (

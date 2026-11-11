@@ -3,14 +3,14 @@
 @theme {
   --font-sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Fraunces", ui-serif, Georgia, serif;
-  --color-bg: #f3efe6;
-  --color-surface: #fffdf8;
-  --color-ink: #1d1a16;
-  --color-muted: #6e675f;
-  --color-accent: #c24e16;
-  --color-on-accent: #fff7f2;
-  --color-line: #e3dbcf;
-  --color-chip: #efe7da;
+  --color-bg: #f5f5f5;
+  --color-surface: #ffffff;
+  --color-ink: #0a3036;
+  --color-muted: #5d5a5a;
+  --color-accent: #26b8ce;
+  --color-on-accent: #0a3036;
+  --color-line: #e3e3e3;
+  --color-chip: #e7f6f8;
 }
 
 @layer base {
@@ -47,6 +47,9 @@
     clip: rect(0, 0, 0, 0);
   }
   @media print {
+    @page {
+      margin: 0.4in;
+    }
     html,
     body.printing {
       height: auto !important;

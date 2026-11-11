@@ -5,21 +5,26 @@ import { MaterialView } from "@/components/material-view";
 import { Scanner } from "@/components/scanner";
 import {
   CATALOG,
-  FAMILIES,
   ROW_BY_ID,
-  THICKNESSES,
+  familiesFor,
   filterCatalog,
+  thicknessesFor,
   type CatalogRow,
   type FamilyFilter,
   type SortKey,
 } from "@/lib/catalog";
-import { parseProofgrade, type ParsedCode } from "@/lib/proofgrade";
+import { parseProofgrade, randomSerial, buildPayload, type ParsedCode } from "@/lib/proofgrade";
 
 type Miss =
   | { kind: "unread"; raw: string; reason: string }
   | { kind: "missing"; raw: string; code: ParsedCode };
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>): { code?: string } => ({
+    code: typeof search.code === "string" && search.code.trim() ? search.code : undefined,
+  }),
+  component: Home,
+});
 
 const SORTS: { key: SortKey; label: string }[] = [
   { key: "name", label: "Name" },
@@ -30,21 +35,43 @@ const SORTS: { key: SortKey; label: string }[] = [
 
 const PAGE_SIZE = 25;
 
+function readShare(code: string | undefined): {
+  version: "B" | "C";
+  serial: string;
+  selectedId: number | null;
+  miss: Miss | null;
+} {
+  const empty = { version: "C" as const, serial: "AAAA", selectedId: null, miss: null };
+  if (!code) return empty;
+  const result = parseProofgrade(code);
+  if (!result.ok) return { ...empty, miss: { kind: "unread", raw: code, reason: result.message } };
+  const parsed = result.code;
+  const version = parsed.version === "B" || parsed.version === "C" ? parsed.version : "C";
+  const serial = parsed.serial.length >= 3 ? parsed.serial : "AAAA";
+  const row = ROW_BY_ID.get(parsed.jsonId);
+  if (!row) return { version, serial, selectedId: null, miss: { kind: "missing", raw: parsed.raw, code: parsed } };
+  return { version, serial, selectedId: row.numericId, miss: null };
+}
+
 function Home() {
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const shared = readShare(search.code);
   const [mode, setMode] = useState<"scan" | "browse">("scan");
-  const [version, setVersion] = useState<"B" | "C">("C");
-  const [serial, setSerial] = useState("AAAA");
+  const [version, setVersion] = useState<"B" | "C">(shared.version);
+  const [serial, setSerial] = useState(shared.serial);
   const [query, setQuery] = useState("");
   const [family, setFamily] = useState<FamilyFilter>("All");
   const [thickness, setThickness] = useState<number | null>(null);
   const [sort, setSort] = useState<SortKey>("name");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(shared.selectedId);
   const [scanned, setScanned] = useState<ParsedCode | null>(null);
-  const [miss, setMiss] = useState<Miss | null>(null);
-  const [jump, setJump] = useState(0);
+  const [miss, setMiss] = useState<Miss | null>(shared.miss);
+  const [jump, setJump] = useState(shared.selectedId != null || shared.miss ? 1 : 0);
   const [page, setPage] = useState(0);
   const detailRef = useRef<HTMLDivElement>(null);
   const missRef = useRef<HTMLDivElement>(null);
+  const appliedCode = useRef(search.code);
 
   const rows = useMemo(
     () => filterCatalog(CATALOG, query, family, thickness, sort),
@@ -55,10 +82,42 @@ function Home() {
   const pageStart = safePage * PAGE_SIZE;
   const pageRows = rows.slice(pageStart, pageStart + PAGE_SIZE);
   const selected = selectedId != null ? (ROW_BY_ID.get(selectedId) ?? null) : null;
+  const thicknessChoices = useMemo(() => thicknessesFor(CATALOG, family, query), [family, query]);
+  const familyChoices = useMemo(() => familiesFor(CATALOG, thickness, query), [thickness, query]);
+
+  useEffect(() => {
+    if (search.code === appliedCode.current) return;
+    appliedCode.current = search.code;
+    const next = readShare(search.code);
+    setVersion(next.version);
+    setSerial(next.serial);
+    setSelectedId(next.selectedId);
+    setScanned(null);
+    setMiss(next.miss);
+    if (next.selectedId != null || next.miss) reveal();
+  }, [search.code]);
+
+  useEffect(() => {
+    if (selectedId == null) return;
+    const payload = buildPayload(version, selectedId, serial);
+    if (!payload || !payload.endsWith(serial) || payload === search.code) return;
+    appliedCode.current = payload;
+    void navigate({ to: "/", search: { code: payload }, replace: true, resetScroll: false });
+  }, [navigate, search.code, selectedId, serial, version]);
 
   useEffect(() => {
     setPage(0);
   }, [query, family, thickness, sort]);
+
+  useEffect(() => {
+    if (thickness != null && !thicknessChoices.some((item) => Math.abs(item.mm - thickness) <= 0.0005)) {
+      setThickness(null);
+    }
+  }, [thickness, thicknessChoices]);
+
+  useEffect(() => {
+    if (family !== "All" && !familyChoices.includes(family)) setFamily("All");
+  }, [family, familyChoices]);
 
   useEffect(() => {
     if (jump === 0) return;
@@ -102,12 +161,12 @@ function Home() {
     setSelectedId(row.numericId);
     setScanned(null);
     setMiss(null);
-    setSerial((current) => (current.length >= 3 ? current : "AAAA"));
+    setSerial(randomSerial());
     reveal();
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:py-10">
+    <main className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:py-10">
       <header className="flex flex-col gap-3">
         <p className="text-xs font-semibold tracking-widest text-accent uppercase">Glowforge materials</p>
         <h1 className="font-display text-4xl leading-tight font-semibold sm:text-5xl">Proofgrade Codes</h1>
@@ -121,7 +180,7 @@ function Home() {
           Scan
         </Tab>
         <Tab active={mode === "browse"} onClick={() => setMode("browse")}>
-          Materials
+          Search
         </Tab>
       </div>
 
@@ -186,7 +245,7 @@ function Home() {
                 onChange={(event) => setFamily(event.target.value as FamilyFilter)}
                 className="min-h-11 rounded-xl border border-line bg-surface px-3 font-semibold"
               >
-                {FAMILIES.map((item) => (
+                {familyChoices.map((item) => (
                   <option key={item} value={item}>
                     {item}
                   </option>
@@ -201,7 +260,7 @@ function Home() {
                 className="min-h-11 rounded-xl border border-line bg-surface px-3 font-semibold"
               >
                 <option value="all">All</option>
-                {THICKNESSES.map((item) => (
+                {thicknessChoices.map((item) => (
                   <option key={item.mm} value={String(item.mm)}>
                     {item.label}
                   </option>
@@ -269,6 +328,49 @@ function Home() {
           ) : null}
         </section>
       ) : null}
+
+      <footer className="mt-auto flex flex-col gap-1 border-t border-line pt-4 text-sm text-muted">
+        <p>
+          Proofgrade Codes by{" "}
+          <a
+            href="https://x.com/scottcandy34"
+            className="font-semibold text-ink underline decoration-line underline-offset-2"
+          >
+            @scottcandy34
+          </a>
+        </p>
+        <p>
+          <a
+            href="https://github.com/scottcandy34/glowforge-proofgrade"
+            className="inline-flex items-center gap-1.5 font-semibold text-ink underline decoration-line underline-offset-2"
+          >
+            Source code
+            <svg viewBox="0 0 16 16" aria-hidden="true" className="size-4 fill-current">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8" />
+            </svg>
+          </a>
+        </p>
+        <p>
+          Also part of{" "}
+          <a href="https://maurisnulla.com" className="font-semibold text-ink underline decoration-line underline-offset-2">
+            maurisnulla.com
+          </a>
+        </p>
+        <p>
+          Material names and laser settings are from{" "}
+          <a href="https://glowforge.com/b/proofgrade" className="font-semibold text-ink underline decoration-line underline-offset-2">
+            Glowforge Proofgrade
+          </a>
+          . Shop the{" "}
+          <a
+            href="https://shop.glowforge.com/collections/materials"
+            className="font-semibold text-ink underline decoration-line underline-offset-2"
+          >
+            materials
+          </a>
+          .
+        </p>
+      </footer>
     </main>
   );
 }

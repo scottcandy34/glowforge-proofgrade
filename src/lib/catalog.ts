@@ -179,6 +179,44 @@ export type FamilyFilter = (typeof FAMILIES)[number];
 
 export type SortKey = "name" | "id" | "code" | "thickness";
 
+function matchesQuery(row: CatalogRow, query: string): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return `${row.name} ${row.family} ${row.thickness}`.toLowerCase().includes(q);
+}
+
+function sameThickness(mm: number | null, thickness: number): boolean {
+  return mm != null && Math.abs(mm - thickness) <= 0.0005;
+}
+
+/** Thicknesses still available for the selected type and search. */
+export function thicknessesFor(rows: CatalogRow[], family: FamilyFilter, query: string): ThicknessChoice[] {
+  const seen = new Set<number>();
+  const choices: ThicknessChoice[] = [];
+  for (const row of rows) {
+    if (family !== "All" && row.family !== family) continue;
+    if (!matchesQuery(row, query)) continue;
+    if (row.mm == null) continue;
+    const mm = Math.round(row.mm * 1000) / 1000;
+    if (seen.has(mm)) continue;
+    seen.add(mm);
+    choices.push({ mm, label: formatMeasure(mm) });
+  }
+  choices.sort((a, b) => a.mm - b.mm);
+  return choices;
+}
+
+/** Types still available for the selected thickness and search. All stays first. */
+export function familiesFor(rows: CatalogRow[], thickness: number | null, query: string): FamilyFilter[] {
+  const present = new Set<string>();
+  for (const row of rows) {
+    if (thickness != null && !sameThickness(row.mm, thickness)) continue;
+    if (!matchesQuery(row, query)) continue;
+    present.add(row.family);
+  }
+  return FAMILIES.filter((item) => item === "All" || present.has(item));
+}
+
 export function filterCatalog(
   rows: CatalogRow[],
   query: string,
@@ -186,13 +224,10 @@ export function filterCatalog(
   thickness: number | null,
   sort: SortKey,
 ): CatalogRow[] {
-  const q = query.trim().toLowerCase();
   const filtered = rows.filter((row) => {
     if (family !== "All" && row.family !== family) return false;
-    if (thickness != null && (row.mm == null || Math.abs(row.mm - thickness) > 0.0005)) return false;
-    if (!q) return true;
-    const hay = `${row.name} ${row.family} ${row.thickness}`.toLowerCase();
-    return hay.includes(q);
+    if (thickness != null && !sameThickness(row.mm, thickness)) return false;
+    return matchesQuery(row, query);
   });
   filtered.sort((a, b) => {
     if (sort === "id") return a.numericId - b.numericId;

@@ -1,52 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronRight, Copy, Download, Printer } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Copy, Download, Printer, Share2 } from "lucide-react";
 import { QrImage } from "@/components/qr-image";
 import { tubeSettings, tubeTypes, type CatalogRow, type LaserOp } from "@/lib/catalog";
+import { shopUrl } from "@/lib/shop";
 import { buildPayload, randomSerial, type ParsedCode } from "@/lib/proofgrade";
-
-const QR_CODE_INCHES = 1.35;
-
-function pdfEscape(value: string): string {
-  return value.replaceAll("\\", " ").replaceAll("(", " ").replaceAll(")", " ");
-}
-
-function qrPdf(modules: { size: number; get: (row: number, col: number) => number }, title: string): string {
-  const n = modules.size;
-  const codePt = QR_CODE_INCHES * 72;
-  const modulePt = codePt / n;
-  const x0 = 0.6 * 72;
-  const y0 = 11 * 72 - 0.6 * 72 - codePt;
-  let ops = "0 0 0 rg\n";
-  for (let row = 0; row < n; row += 1) {
-    for (let col = 0; col < n; col += 1) {
-      if (!modules.get(row, col)) continue;
-      const x = x0 + col * modulePt;
-      const y = y0 + (n - 1 - row) * modulePt;
-      ops += `${x.toFixed(2)} ${y.toFixed(2)} ${modulePt.toFixed(2)} ${modulePt.toFixed(2)} re f\n`;
-    }
-  }
-  ops += `BT /F1 11 Tf ${x0.toFixed(2)} ${(y0 - 18).toFixed(2)} Td (${pdfEscape(title)}) Tj ET\n`;
-  const objects = [
-    "1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n",
-    "2 0 obj << /Type /Pages /Count 1 /Kids [3 0 R] >> endobj\n",
-    "3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 5 0 R /Resources << /Font << /F1 4 0 R >> >> >> endobj\n",
-    "4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n",
-    `5 0 obj << /Length ${ops.length} >> stream\n${ops}endstream endobj\n`,
-  ];
-  let body = "%PDF-1.4\n";
-  const offsets = [0];
-  for (const object of objects) {
-    offsets.push(body.length);
-    body += object;
-  }
-  const xrefAt = body.length;
-  let xref = `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
-  for (let index = 1; index < offsets.length; index += 1) {
-    xref += `${String(offsets[index]).padStart(10, "0")} 00000 n \n`;
-  }
-  body += `${xref}trailer << /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefAt}\n%%EOF`;
-  return body;
-}
 
 function isFramed(): boolean {
   return window.parent !== window;
@@ -169,6 +126,7 @@ export function MaterialView({
   const [tube, setTube] = useState(tubes.includes("pro") ? "pro" : (tubes[0] ?? "basic"));
   const [op, setOp] = useState<OpKey>("cut");
   const [copied, setCopied] = useState<"copied" | "selected" | null>(null);
+  const [shared, setShared] = useState<"shared" | "copied" | null>(null);
   const [saveUrl, setSaveUrl] = useState<string | null>(null);
   const codeRef = useRef<HTMLParagraphElement>(null);
   const [thumbOk, setThumbOk] = useState(true);
@@ -256,6 +214,33 @@ export function MaterialView({
     mark("selected");
   }
 
+  function pageUrl(): string {
+    const url = new URL(window.location.href);
+    if (payload) url.searchParams.set("code", payload);
+    return url.toString();
+  }
+
+  async function sharePage() {
+    if (!payload) return;
+    const url = pageUrl();
+    const mark = (state: "shared" | "copied") => {
+      setShared(state);
+      window.setTimeout(() => setShared(null), 1600);
+    };
+    if (!isFramed() && navigator.share) {
+      try {
+        await navigator.share({ title: row.name, text: payload, url });
+        mark("shared");
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
+    const copiedLink =
+      copyText(url) || (await navigator.clipboard.writeText(url).then(() => true).catch(() => false));
+    if (copiedLink) mark("copied");
+  }
+
   function fileName() {
     return `proofgrade-${row.prefix ?? row.numericId}.png`;
   }
@@ -303,54 +288,11 @@ export function MaterialView({
     window.print();
   }
 
-  async function printCode() {
-    if (!printUrl || !payload) return;
-    const qr = (await import("qrcode")) as {
-      create?: (text: string, opts: { errorCorrectionLevel: "M" }) => {
-        modules: { size: number; get: (row: number, col: number) => number };
-      };
-      default?: {
-        create?: (text: string, opts: { errorCorrectionLevel: "M" }) => {
-          modules: { size: number; get: (row: number, col: number) => number };
-        };
-      };
-    };
-    const create = qr.create ?? qr.default?.create;
-    if (create) {
-      const matrix = create(payload, { errorCorrectionLevel: "M" });
-      const blob = new Blob([qrPdf(matrix.modules, row.name)], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const frame = document.createElement("iframe");
-      frame.setAttribute("aria-hidden", "true");
-      frame.style.position = "fixed";
-      frame.style.left = "-10000px";
-      frame.style.top = "0";
-      frame.style.width = "800px";
-      frame.style.height = "1000px";
-      frame.style.border = "0";
-      frame.src = url;
-      document.body.appendChild(frame);
-      frame.onload = () => {
-        const win = frame.contentWindow;
-        if (!win) {
-          frame.remove();
-          URL.revokeObjectURL(url);
-          printThisPage();
-          return;
-        }
-        const cleanup = () => {
-          frame.remove();
-          URL.revokeObjectURL(url);
-          win.removeEventListener("afterprint", cleanup);
-        };
-        win.addEventListener("afterprint", cleanup);
-        win.focus();
-        win.print();
-      };
-      return;
-    }
+  function printCode() {
     printThisPage();
   }
+
+  const orderUrl = shopUrl(row);
 
   return (
     <article
@@ -432,20 +374,21 @@ export function MaterialView({
                 />
               </label>
               {payload ? (
-                <p ref={codeRef} className="text-sm font-semibold break-all tracking-wide">
-                  {payload}
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p ref={codeRef} className="min-w-0 flex-1 text-sm font-semibold break-all tracking-wide">
+                    {payload}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void copyPayload()}
+                    className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-line px-4 text-sm font-semibold"
+                  >
+                    {copied === "copied" ? <Check className="size-4" /> : <Copy className="size-4" />}
+                    {copied === "copied" ? "Copied" : "Copy"}
+                  </button>
+                </div>
               ) : null}
               <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => void copyPayload()}
-                  disabled={!payload}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-accent px-4 text-sm font-semibold text-on-accent disabled:opacity-50"
-                >
-                  {copied === "copied" ? <Check className="size-4" /> : <Copy className="size-4" />}
-                  {copied === "copied" ? "Copied" : copied === "selected" ? "Selected" : "Copy code"}
-                </button>
                 <button
                   type="button"
                   onClick={() => void download()}
@@ -463,6 +406,15 @@ export function MaterialView({
                 >
                   <Printer className="size-4" />
                   Print
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void sharePage()}
+                  disabled={!payload}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line px-4 text-sm font-semibold disabled:opacity-50"
+                >
+                  {shared ? <Check className="size-4" /> : <Share2 className="size-4" />}
+                  {shared === "copied" ? "Link copied" : shared === "shared" ? "Shared" : "Share"}
                 </button>
               </div>
               <p className="text-sm text-muted">Prints at 1.35 in (34 mm) across the code itself. Use 100% scale.</p>
@@ -528,6 +480,24 @@ export function MaterialView({
           )
         ) : null}
         {row.sku ? <p className="text-xs text-muted">SKU {row.sku}</p> : null}
+        {orderUrl ? (
+          <a
+            href={orderUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-accent px-4 text-sm font-semibold text-on-accent"
+          >
+            Order more
+          </a>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-full bg-chip px-4 text-sm font-semibold text-muted"
+          >
+            Order more
+          </button>
+        )}
       </div>
       {printUrl ? (
         <div className="sheet-print" aria-hidden="true">
